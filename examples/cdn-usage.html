@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mountable Wallet - CDN Usage Example</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      background: #0a0a0f;
+    }
+    #wallet-container {
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <!-- Container where wallet will be mounted -->
+  <div id="wallet-container"></div>
+
+  <!-- React (required - wallet expects host to provide) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Mountable Wallet (single JS file with CSS bundled) -->
+  <!-- Replace with your CDN URL -->
+  <script src="../dist/mountable-wallet.umd.js"></script>
+
+  <script>
+    // Mount the wallet when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mount with configuration
+      const wallet = MountableWallet.mount('#wallet-container', {
+        // Wallet identity
+        walletGuid: 'example-wallet-guid',
+        walletName: 'Demo User',
+
+        // Authentication (provide one of these)
+        // authToken: 'your-jwt-token',
+        // pmc: 'page-monkey-code',
+
+        // API endpoints (defaults shown)
+        apiBaseUrl: 'https://seemynft.page',
+
+        // Theme customization (optional)
+        customTheme: {
+          '--mw-accent': '#6366f1',
+          // '--mw-bg-primary': '#0a0a0f',
+        },
+
+        // Callbacks
+        onAuthError: function(error) {
+          console.error('Auth error:', error);
+        },
+        onBalanceChange: function(balances) {
+          console.log('Balances updated:', balances);
+        },
+      });
+
+      // Controller methods available:
+      // wallet.refresh()      - Refresh wallet data
+      // wallet.updateConfig() - Update configuration
+      // wallet.unmount()      - Clean unmount
+      // wallet.getConfig()    - Get current config
+
+      // Example: Add a refresh button
+      console.log('Wallet mounted successfully!');
+      console.log('Controller:', wallet);
+    });
+  </script>
+</body>
+</html>

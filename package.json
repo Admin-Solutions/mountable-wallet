@@ -1,0 +1,38 @@
+{
+  "name": "@admin-solutions/mountable-wallet",
+  "version": "1.0.0",
+  "description": "Mountable wallet component for Nexus platform",
+  "type": "module",
+  "main": "dist/mountable-wallet.umd.js",
+  "module": "dist/mountable-wallet.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/mountable-wallet.es.js",
+      "require": "./dist/mountable-wallet.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "dependencies": {
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.300.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "vite": "^5.0.0",
+    "vite-plugin-css-injected-by-js": "^3.5.2"
+  }
+}
