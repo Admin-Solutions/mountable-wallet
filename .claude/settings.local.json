@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth:*)",
+      "Bash(git init:*)",
+      "Bash(gh repo create:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Mountable wallet component\n\n- React component for wallet functionality\n- Accounting hub with balance sheet and profit/loss reports\n- Tailwind CSS styling with CSS-in-JS injection\n- Vite build configuration for ES and UMD outputs\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
