@@ -28,6 +28,8 @@ export async function universalPost(apiBaseUrl, endpointGuid, additionalPayload 
   })
 
   if (!response.ok) {
+    const body = await response.text().catch(() => '')
+    console.error('[universalApi] HTTP error', response.status, response.statusText, body)
     throw new Error(`API error ${response.status}: ${response.statusText}`)
   }
 
@@ -38,9 +40,9 @@ export async function universalPost(apiBaseUrl, endpointGuid, additionalPayload 
   const action = payload.action ?? []
   const value = payload.value ?? []
 
-  // Validate the response belongs to the caller
+  // Validate the response belongs to the caller (case-insensitive — SQL Server returns GUIDs uppercase)
   const responseGuid = action[0]?.valueType
-  if (responseGuid && responseGuid !== endpointGuid) {
+  if (responseGuid && responseGuid.toLowerCase() !== endpointGuid.toLowerCase()) {
     throw new Error(`Response GUID mismatch: expected ${endpointGuid}, got ${responseGuid}`)
   }
 

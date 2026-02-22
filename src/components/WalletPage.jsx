@@ -33,14 +33,9 @@ function CurrencyCard({ currency, isSelected, onClick }) {
       whileTap={{ scale: 0.98 }}
       className={`mw-flex-shrink-0 mw-px-4 mw-py-3 mw-rounded-xl mw-transition-all ${isSelected ? 'mw-bg-wallet-accent/20 mw-border mw-border-wallet-accent/50' : 'mw-glass-card hover:mw-bg-wallet-surface-hover'}`}
     >
-      <div className="mw-flex mw-items-center mw-gap-3">
-        <div className={`mw-w-10 mw-h-10 mw-rounded-full mw-bg-gradient-to-br ${currency.color} mw-flex mw-items-center mw-justify-center mw-text-white mw-font-bold`}>
-          {currency.sign}
-        </div>
-        <div className="mw-text-left">
-          <p className="mw-text-xs mw-text-wallet-text-muted">{currency.code}</p>
-          <p className="mw-font-semibold">{currency.sign}{formattedBalance}</p>
-        </div>
+      <div className="mw-text-left">
+        <p className="mw-text-sm mw-font-semibold mw-text-white">{currency.name}</p>
+        <p className="mw-text-sm mw-text-wallet-text-muted mw-tabular-nums">{formattedBalance}</p>
       </div>
     </motion.button>
   )
@@ -51,7 +46,7 @@ function MainCard({ currency }) {
     minimumFractionDigits: currency.decimalPlaces ?? 0,
     maximumFractionDigits: currency.decimalPlaces ?? 0,
   }).format(currency.balance)
-  const { walletName } = useWalletConfig()
+
 
   return (
     <motion.div
@@ -67,13 +62,11 @@ function MainCard({ currency }) {
       </div>
 
       <div className="mw-relative mw-z-10">
-        <div className="mw-flex mw-items-center mw-justify-between mw-mb-6">
-          <p className="mw-text-white/70 mw-text-sm mw-font-medium">AVAILABLE BALANCE</p>
-          <span className="mw-px-3 mw-py-1 mw-rounded-full mw-bg-white/20 mw-text-white mw-text-sm mw-font-medium">{currency.code}</span>
-        </div>
+        <p className="mw-text-white mw-text-2xl mw-font-bold mw-mb-1">{currency.name}</p>
+        <p className="mw-text-white/60 mw-text-xs mw-font-medium mw-uppercase mw-tracking-wider mw-mb-4">Available Balance</p>
+        <p className="mw-text-4xl sm:mw-text-5xl mw-font-bold mw-text-white mw-tabular-nums">{formattedBalance}</p>
 
-        <p className="mw-text-4xl sm:mw-text-5xl mw-font-bold mw-text-white mw-mb-8">{currency.sign}{formattedBalance}</p>
-
+        {/* Card holder / expires — commented out, may restore later
         <div className="mw-flex mw-items-center mw-justify-between">
           <div>
             <div className="mw-flex mw-gap-1 mw-mb-2">
@@ -91,6 +84,7 @@ function MainCard({ currency }) {
             <p className="mw-text-white mw-font-medium">12/28</p>
           </div>
         </div>
+        */}
       </div>
     </motion.div>
   )
@@ -124,8 +118,8 @@ export function WalletPage() {
         setSelectedCurrency(normalized[0] ?? null)
       })
       .catch((err) => {
-        console.error('[WalletPage] Failed to load currencies:', err)
-        setError('Failed to load balances')
+        console.error('[WalletPage] Failed to load currencies:', err.message, err)
+        setError(err.message || 'Failed to load balances')
       })
       .finally(() => setLoading(false))
   }, [accountingEntityGuid, apiBaseUrl, authToken])

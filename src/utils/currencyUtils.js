@@ -41,8 +41,8 @@ export function parseCurrencySymbol(symbol) {
   if (CODE_TO_SIGN[symbol]) return { sign: CODE_TO_SIGN[symbol], code: symbol }
   if (SIGN_TO_CODE[symbol]) return { sign: symbol, code: SIGN_TO_CODE[symbol] }
 
-  // Unknown currency — use first char as sign, uppercased slice as code
-  return { sign: symbol.charAt(0), code: symbol.toUpperCase().slice(0, 4) }
+  // Custom/unknown currency (e.g. "BBs") — use symbol as-is for both
+  return { sign: symbol, code: symbol }
 }
 
 /**
@@ -57,9 +57,9 @@ export function currencyColor(index) {
  * Transforms raw API currency objects (from GetCurrenciesForAnAccountingEntity)
  * into the normalised shape consumed by WalletPage UI components.
  *
- * Raw shape:  { currencyGuid, symbol, isNativeCurrency, decimalPlaces,
+ * Raw shape:  { currencyGuid, currencyName, symbol, isNativeCurrency, decimalPlaces,
  *               practicalDecimalPlaces, balance }
- * Output shape: { id, sign, code, balance, decimalPlaces, isNativeCurrency, color }
+ * Output shape: { id, name, sign, code, balance, decimalPlaces, isNativeCurrency, color }
  */
 export function normalizeCurrencies(apiCurrencies) {
   if (!Array.isArray(apiCurrencies)) return []
@@ -67,6 +67,7 @@ export function normalizeCurrencies(apiCurrencies) {
     const { sign, code } = parseCurrencySymbol(c.symbol)
     return {
       id: c.currencyGuid,
+      name: c.currencyName || code,
       sign,
       code,
       balance: c.balance ?? 0,
