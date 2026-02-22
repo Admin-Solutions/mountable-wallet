@@ -103,7 +103,7 @@ function MainCardSkeleton() {
 }
 
 export function WalletPage() {
-  const { walletName, accountingEntityGuid, apiBaseUrl } = useWalletConfig()
+  const { walletName, accountingEntityGuid, apiBaseUrl, authToken } = useWalletConfig()
 
   const [currencies, setCurrencies] = useState([])
   const [loading, setLoading] = useState(false)
@@ -117,7 +117,7 @@ export function WalletPage() {
     setLoading(true)
     setError(null)
 
-    getCurrencyBalances(accountingEntityGuid, apiBaseUrl)
+    getCurrencyBalances(accountingEntityGuid, apiBaseUrl, authToken)
       .then((raw) => {
         const normalized = normalizeCurrencies(raw)
         setCurrencies(normalized)
@@ -128,7 +128,7 @@ export function WalletPage() {
         setError('Failed to load balances')
       })
       .finally(() => setLoading(false))
-  }, [accountingEntityGuid, apiBaseUrl])
+  }, [accountingEntityGuid, apiBaseUrl, authToken])
 
   const actions = [
     { icon: Plus, label: 'Add', color: 'mw-bg-green-500/20 mw-text-green-400' },

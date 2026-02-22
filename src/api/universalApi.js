@@ -8,17 +8,21 @@
 /**
  * POST to the Universal API gateway.
  *
- * @param {string} apiBaseUrl   - e.g. 'https://seemynft.page'
- * @param {string} endpointGuid - The EndPointGUID for the SP to invoke
+ * @param {string} apiBaseUrl    - e.g. 'https://seemynft.page'
+ * @param {string} endpointGuid  - The EndPointGUID for the SP to invoke
  * @param {object} additionalPayload - Key/value pairs forwarded as @params
+ * @param {string} [authToken]   - Bearer token from bootstrap (matches nexus-ui interceptor)
  * @returns {Promise<{ action: Array, value: Array }>}
  */
-export async function universalPost(apiBaseUrl, endpointGuid, additionalPayload = {}) {
+export async function universalPost(apiBaseUrl, endpointGuid, additionalPayload = {}, authToken = null) {
   const url = `${apiBaseUrl}/api/universalapi/process`
+
+  const headers = { 'Content-Type': 'application/json' }
+  if (authToken) headers.Authorization = `Bearer ${authToken}`
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     credentials: 'include',
     body: JSON.stringify({ EndPointGUID: endpointGuid, additionalPayload }),
   })
