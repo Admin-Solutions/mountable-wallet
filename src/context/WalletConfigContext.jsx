@@ -12,6 +12,9 @@ export function WalletConfigProvider({ config, children }) {
     walletGuid: config.walletGuid,
     walletName: config.walletName || 'User',
 
+    // Accounting entity (ledger selected via Choose Ledger)
+    accountingEntityGuid: config.accountingEntityGuid || null,
+
     // Authentication
     authToken: config.authToken,
     pmc: config.pmc,
