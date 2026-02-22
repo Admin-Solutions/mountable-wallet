@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Plus,
@@ -7,37 +7,135 @@ import {
   MoreHorizontal,
   Send,
   Download,
-  History
+  History,
+  ChevronDown,
+  Search,
+  Check,
 } from 'lucide-react'
 import { AccountingHub } from './accounting'
 import { useWalletConfig } from '../context/WalletConfigContext'
 import { getCurrencyBalances } from '../services/balanceService'
 import { normalizeCurrencies } from '../utils/currencyUtils'
 
-function CurrencyCardSkeleton() {
-  return (
-    <div className="mw-flex-shrink-0 mw-w-36 mw-h-16 mw-rounded-xl mw-glass-card mw-animate-pulse" />
-  )
-}
+function CurrencyDropdown({ currencies, selectedCurrency, onSelect, loading, error }) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const containerRef = useRef(null)
+  const inputRef = useRef(null)
 
-function CurrencyCard({ currency, isSelected, onClick }) {
-  const formattedBalance = new Intl.NumberFormat('en-US', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: currency.decimalPlaces ?? 0,
-  }).format(currency.balance)
+  const filtered = query.trim()
+    ? currencies.filter((c) =>
+        c.name.toLowerCase().includes(query.toLowerCase()) ||
+        c.code.toLowerCase().includes(query.toLowerCase())
+      )
+    : currencies
+
+  // Close on outside click
+  useEffect(() => {
+    function handleClick(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setOpen(false)
+        setQuery('')
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (open) inputRef.current?.focus()
+  }, [open])
+
+  function handleSelect(currency) {
+    onSelect(currency)
+    setOpen(false)
+    setQuery('')
+  }
+
+  const formatBalance = (c) =>
+    new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: c.decimalPlaces ?? 0,
+    }).format(c.balance)
 
   return (
-    <motion.button
-      onClick={onClick}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className={`mw-flex-shrink-0 mw-px-4 mw-py-3 mw-rounded-xl mw-transition-all ${isSelected ? 'mw-bg-wallet-accent/20 mw-border mw-border-wallet-accent/50' : 'mw-glass-card hover:mw-bg-wallet-surface-hover'}`}
-    >
-      <div className="mw-text-left">
-        <p className="mw-text-sm mw-font-semibold mw-text-white">{currency.name}</p>
-        <p className="mw-text-sm mw-text-wallet-text-muted mw-tabular-nums">{formattedBalance}</p>
-      </div>
-    </motion.button>
+    <div ref={containerRef} className="mw-relative mw-mb-6">
+      {/* Trigger button */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        disabled={loading || !!error}
+        className="mw-w-full mw-flex mw-items-center mw-justify-between mw-px-4 mw-py-3 mw-glass-card hover:mw-bg-wallet-surface-hover mw-transition-colors mw-rounded-xl disabled:mw-opacity-50"
+      >
+        <div className="mw-text-left mw-min-w-0">
+          {loading ? (
+            <span className="mw-text-wallet-text-muted mw-text-sm">Loading currencies…</span>
+          ) : error ? (
+            <span className="mw-text-red-400 mw-text-sm">{error}</span>
+          ) : selectedCurrency ? (
+            <>
+              <p className="mw-text-sm mw-font-semibold mw-text-white mw-truncate">{selectedCurrency.name}</p>
+              <p className="mw-text-xs mw-text-wallet-text-muted mw-tabular-nums">{formatBalance(selectedCurrency)}</p>
+            </>
+          ) : (
+            <span className="mw-text-wallet-text-muted mw-text-sm">Select currency</span>
+          )}
+        </div>
+        <ChevronDown
+          className={`mw-w-4 mw-h-4 mw-text-wallet-text-muted mw-flex-shrink-0 mw-ml-2 mw-transition-transform ${open ? 'mw-rotate-180' : ''}`}
+        />
+      </button>
+
+      {/* Dropdown panel */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={{ duration: 0.15 }}
+            className="mw-absolute mw-top-full mw-left-0 mw-right-0 mw-mt-2 mw-z-50 mw-glass-card mw-rounded-xl mw-overflow-hidden mw-shadow-xl"
+          >
+            {/* Search input */}
+            <div className="mw-flex mw-items-center mw-gap-2 mw-px-3 mw-py-2 mw-border-b mw-border-white/10">
+              <Search className="mw-w-4 mw-h-4 mw-text-wallet-text-muted mw-flex-shrink-0" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search currencies…"
+                className="mw-flex-1 mw-bg-transparent mw-text-sm mw-text-white mw-placeholder-wallet-text-muted mw-outline-none"
+              />
+            </div>
+
+            {/* Options list */}
+            <ul className="mw-max-h-56 mw-overflow-y-auto">
+              {filtered.length === 0 ? (
+                <li className="mw-px-4 mw-py-3 mw-text-sm mw-text-wallet-text-muted">No results</li>
+              ) : (
+                filtered.map((c) => (
+                  <li key={c.id}>
+                    <button
+                      onClick={() => handleSelect(c)}
+                      className="mw-w-full mw-flex mw-items-center mw-justify-between mw-px-4 mw-py-3 hover:mw-bg-wallet-surface-hover mw-transition-colors mw-text-left"
+                    >
+                      <div className="mw-min-w-0">
+                        <p className="mw-text-sm mw-font-medium mw-text-white mw-truncate">{c.name}</p>
+                        <p className="mw-text-xs mw-text-wallet-text-muted mw-tabular-nums">{formatBalance(c)}</p>
+                      </div>
+                      {selectedCurrency?.id === c.id && (
+                        <Check className="mw-w-4 mw-h-4 mw-text-wallet-accent mw-flex-shrink-0 mw-ml-2" />
+                      )}
+                    </button>
+                  </li>
+                ))
+              )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   )
 }
 
@@ -145,25 +243,15 @@ export function WalletPage() {
         <h1 className="mw-text-2xl mw-font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
       </motion.div>
 
-      {/* Currency cards */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="mw-flex mw-gap-3 mw-overflow-x-auto mw-pb-4 -mw-mx-4 mw-px-4 mw-scrollbar-hide mw-mb-6"
-      >
-        {loading && [0, 1, 2].map((i) => <CurrencyCardSkeleton key={i} />)}
-        {!loading && currencies.map((currency) => (
-          <CurrencyCard
-            key={currency.id}
-            currency={currency}
-            isSelected={selectedCurrency?.id === currency.id}
-            onClick={() => setSelectedCurrency(currency)}
-          />
-        ))}
-        {!loading && error && (
-          <p className="mw-text-sm mw-text-red-400 mw-self-center">{error}</p>
-        )}
+      {/* Currency selector */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+        <CurrencyDropdown
+          currencies={currencies}
+          selectedCurrency={selectedCurrency}
+          onSelect={setSelectedCurrency}
+          loading={loading}
+          error={error}
+        />
       </motion.div>
 
       {/* Main balance card */}
