@@ -1,20 +1,22 @@
 import { createRoot } from 'react-dom/client'
 import { MountableWallet } from './MountableWallet'
-import './styles/index.css'
+// Import CSS as an inline string so we control exactly when it's injected into
+// document.head, and can remove it cleanly when the last instance unmounts.
+import walletCss from './styles/index.css?inline'
 
 // Store active instances for cleanup
 const instances = new Map()
 
-// Track if styles have been injected
-let stylesInjected = false
+// Shared <style> element for the wallet's bundled CSS.
+// Created on first mount, removed when the last instance unmounts.
+let sharedStyleEl = null
 
-/**
- * Inject styles into the document if not already present
- */
-function injectStyles() {
-  if (stylesInjected) return
-  // Styles are bundled with the JS, so they auto-inject via Vite
-  stylesInjected = true
+function isStyleNode(node) {
+  return (
+    node.nodeType === Node.ELEMENT_NODE &&
+    (node.tagName === 'STYLE' ||
+      (node.tagName === 'LINK' && node.getAttribute('rel') === 'stylesheet'))
+  )
 }
 
 /**
@@ -24,8 +26,6 @@ function injectStyles() {
  * @returns {object} Controller object with refresh, updateConfig, unmount methods
  */
 export function mount(selector, config = {}) {
-  injectStyles()
-
   const container = typeof selector === 'string'
     ? document.querySelector(selector)
     : selector
@@ -41,6 +41,30 @@ export function mount(selector, config = {}) {
     })
   }
 
+  // Inject the shared wallet CSS once (re-inject if it was removed by a previous unmount)
+  if (!sharedStyleEl || !document.head.contains(sharedStyleEl)) {
+    sharedStyleEl = document.createElement('style')
+    sharedStyleEl.setAttribute('data-mw-styles', '')
+    sharedStyleEl.textContent = walletCss
+    document.head.appendChild(sharedStyleEl)
+  }
+
+  // Track any additional <style>/<link rel="stylesheet"> nodes that React or its
+  // dependencies (e.g. framer-motion) inject into document.head during the first
+  // render. sharedStyleEl is excluded because it is managed above.
+  const renderInjectedStyles = []
+  const observer = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (isStyleNode(node) && node !== sharedStyleEl) {
+          renderInjectedStyles.push(node)
+        }
+      }
+    }
+  })
+
+  // Start observing BEFORE createRoot so any first-render CSS injections are captured
+  observer.observe(document.head, { childList: true })
   const root = createRoot(container)
   let currentConfig = { ...config }
 
@@ -49,6 +73,10 @@ export function mount(selector, config = {}) {
   }
 
   render(currentConfig)
+
+  // Disconnect after one microtask — all synchronous and Promise-scheduled
+  // style injections from the first render will have been recorded by then
+  Promise.resolve().then(() => observer.disconnect())
 
   // Create controller object
   const controller = {
@@ -69,11 +97,19 @@ export function mount(selector, config = {}) {
     },
 
     /**
-     * Unmount the wallet component
+     * Unmount the wallet component and remove every style node it injected
      */
     unmount: () => {
       root.unmount()
+      // Remove styles injected by React / runtime dependencies during first render
+      renderInjectedStyles.forEach((el) => el.remove())
+      renderInjectedStyles.length = 0
       instances.delete(container)
+      // Remove the shared wallet CSS when the last instance unmounts
+      if (instances.size === 0) {
+        sharedStyleEl?.remove()
+        sharedStyleEl = null
+      }
     },
 
     /**

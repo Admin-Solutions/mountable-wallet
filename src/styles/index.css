@@ -1,8 +1,43 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4 — all utilities are prefixed with "mw-" to avoid collisions
+   with the host app's own Tailwind instance. */
+@import "tailwindcss" prefix(mw-);
 
-/* CSS Variables for theming - can be overridden by host */
+/* Tell Tailwind where to scan for class names when building the library. */
+@source '../';
+
+/* -----------------------------------------------------------------------
+   Custom wallet colour tokens.
+   Keyed off the CSS custom-properties that .mw-wallet-root exposes below,
+   so the host can retheme by overriding those variables on the container.
+   The wallet-* names are intentionally unique and won't clash with the
+   host app's standard Tailwind v4 theme variables.
+   ----------------------------------------------------------------------- */
+@theme {
+  --color-wallet-bg:             var(--mw-bg-primary,     #0a0a0f);
+  --color-wallet-bg-secondary:   var(--mw-bg-secondary,   #12121a);
+  --color-wallet-bg-tertiary:    var(--mw-bg-tertiary,    #1a1a24);
+
+  --color-wallet-surface:        var(--mw-surface,        rgba(255, 255, 255, 0.03));
+  --color-wallet-surface-hover:  var(--mw-surface-hover,  rgba(255, 255, 255, 0.06));
+  --color-wallet-surface-border: var(--mw-surface-border, rgba(255, 255, 255, 0.08));
+
+  --color-wallet-accent:         var(--mw-accent,       #6366f1);
+  --color-wallet-accent-light:   var(--mw-accent-light, #818cf8);
+  --color-wallet-accent-dark:    var(--mw-accent-dark,  #4f46e5);
+
+  --color-wallet-text:           var(--mw-text-primary,   #f8fafc);
+  --color-wallet-text-secondary: var(--mw-text-secondary, #94a3b8);
+  --color-wallet-text-muted:     var(--mw-text-muted,     #64748b);
+
+  --color-wallet-success: var(--mw-success, #22c55e);
+  --color-wallet-error:   var(--mw-error,   #ef4444);
+  --color-wallet-warning: var(--mw-warning, #f59e0b);
+}
+
+/* -----------------------------------------------------------------------
+   Wallet root — exposes themeable CSS custom properties and applies base
+   typography. Scoped to .mw-wallet-root so nothing leaks to the host.
+   ----------------------------------------------------------------------- */
 .mw-wallet-root {
   --mw-bg-primary: #0a0a0f;
   --mw-bg-secondary: #12121a;
@@ -20,7 +55,6 @@
   --mw-error: #ef4444;
   --mw-warning: #f59e0b;
 
-  /* Apply base styles */
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   color: var(--mw-text-primary);
   background-color: var(--mw-bg-primary);
