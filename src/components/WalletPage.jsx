@@ -139,6 +139,33 @@ function CurrencyDropdown({ currencies, selectedCurrency, onSelect, loading, err
   )
 }
 
+function CurrencyCardSkeleton() {
+  return (
+    <div className="mw-flex-shrink-0 mw-w-36 mw-h-16 mw-rounded-xl mw-glass-card mw-animate-pulse" />
+  )
+}
+
+function CurrencyCard({ currency, isSelected, onClick }) {
+  const formattedBalance = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: currency.decimalPlaces ?? 0,
+  }).format(currency.balance)
+
+  return (
+    <motion.button
+      onClick={onClick}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      className={`mw-flex-shrink-0 mw-px-4 mw-py-3 mw-rounded-xl mw-transition-all ${isSelected ? 'mw-bg-wallet-accent/20 mw-border mw-border-wallet-accent/50' : 'mw-glass-card hover:mw-bg-wallet-surface-hover'}`}
+    >
+      <div className="mw-text-left">
+        <p className="mw-text-sm mw-font-semibold mw-text-white">{currency.name}</p>
+        <p className="mw-text-sm mw-text-wallet-text-muted mw-tabular-nums">{formattedBalance}</p>
+      </div>
+    </motion.button>
+  )
+}
+
 function MainCard({ currency }) {
   const formattedBalance = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: currency.decimalPlaces ?? 0,
@@ -243,7 +270,7 @@ export function WalletPage() {
         <h1 className="mw-text-2xl mw-font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
       </motion.div>
 
-      {/* Currency selector */}
+      {/* Currency selector dropdown */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
         <CurrencyDropdown
           currencies={currencies}
@@ -252,6 +279,24 @@ export function WalletPage() {
           loading={loading}
           error={error}
         />
+      </motion.div>
+
+      {/* Currency cards — horizontal scroll */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+        className="mw-flex mw-gap-3 mw-overflow-x-auto mw-pb-4 -mw-mx-4 mw-px-4 mw-scrollbar-hide mw-mb-6"
+      >
+        {loading && [0, 1, 2].map((i) => <CurrencyCardSkeleton key={i} />)}
+        {!loading && currencies.map((currency) => (
+          <CurrencyCard
+            key={currency.id}
+            currency={currency}
+            isSelected={selectedCurrency?.id === currency.id}
+            onClick={() => setSelectedCurrency(currency)}
+          />
+        ))}
       </motion.div>
 
       {/* Main balance card */}
