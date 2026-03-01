@@ -1,6 +1,6 @@
 /* Tailwind v4 — all utilities are prefixed with "mw-" to avoid collisions
    with the host app's own Tailwind instance. */
-@import "tailwindcss" prefix(mw-);
+@import "tailwindcss" prefix(mw);
 
 /* Tell Tailwind where to scan for class names when building the library. */
 @source '../';
