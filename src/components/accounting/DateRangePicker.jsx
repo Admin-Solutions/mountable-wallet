@@ -22,7 +22,7 @@ export function DateRangePicker({ options = [], selected, onChange }) {
   return (
     <div
       ref={scrollRef}
-      className="mw-flex mw-gap-2 mw-overflow-x-auto mw-scrollbar-hide mw-py-2 mw-px-1 -mw-mx-1"
+      className="flex gap-2 overflow-x-auto mw-scrollbar-hide py-2 px-1 -mx-1"
       style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
     >
       {options.map((option) => {
@@ -33,18 +33,18 @@ export function DateRangePicker({ options = [], selected, onChange }) {
             ref={isSelected ? selectedRef : null}
             onClick={() => onChange(option.id)}
             className={`
-              mw-relative mw-px-4 mw-py-2 mw-rounded-full mw-whitespace-nowrap mw-text-sm mw-font-medium
-              mw-transition-colors mw-flex-shrink-0
+              relative px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium
+              transition-colors flex-shrink-0
               ${isSelected
-                ? 'mw-bg-wallet-accent mw-text-white'
-                : 'mw-bg-wallet-bg-tertiary/50 mw-text-wallet-text-secondary hover:mw-text-wallet-text hover:mw-bg-wallet-bg-tertiary'
+                ? 'bg-wallet-accent text-white'
+                : 'bg-wallet-bg-tertiary/50 text-wallet-text-secondary hover:text-wallet-text hover:bg-wallet-bg-tertiary'
               }
             `}
           >
             {isSelected && (
               <motion.div
                 layoutId="mw-period-highlight"
-                className="mw-absolute mw-inset-0 mw-bg-wallet-accent mw-rounded-full"
+                className="absolute inset-0 bg-wallet-accent rounded-full"
                 style={{ zIndex: -1 }}
                 transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
               />

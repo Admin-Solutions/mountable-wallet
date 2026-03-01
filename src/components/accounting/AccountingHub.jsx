@@ -130,7 +130,7 @@ export function AccountingHub({ isOpen, onClose, defaultCurrency = 'GBP' }) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
         onClick={onClose}
-        className="mw-fixed mw-inset-0 mw-z-[60] mw-bg-black/50"
+        className="fixed inset-0 z-[60] bg-black/50"
       />
 
       <motion.div
@@ -138,10 +138,10 @@ export function AccountingHub({ isOpen, onClose, defaultCurrency = 'GBP' }) {
         animate={{ clipPath: 'inset(0 0% 0 0)' }}
         exit={{ clipPath: 'inset(0 100% 0 0)' }}
         transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        className="mw-fixed mw-inset-0 mw-z-[100] mw-overflow-hidden"
+        className="fixed inset-0 z-[100] overflow-hidden"
       >
         <div
-          className="mw-h-full mw-bg-wallet-bg mw-flex mw-flex-col"
+          className="h-full bg-wallet-bg flex flex-col"
           style={{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.25s ease-out' }}
         >
           <div
@@ -149,45 +149,45 @@ export function AccountingHub({ isOpen, onClose, defaultCurrency = 'GBP' }) {
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
             onMouseDown={handleMouseDown}
-            className="mw-absolute mw-left-0 mw-top-0 mw-bottom-0 mw-w-10 mw-z-20 mw-cursor-grab active:mw-cursor-grabbing"
+            className="absolute left-0 top-0 bottom-0 w-10 z-20 cursor-grab active:cursor-grabbing"
             style={{ touchAction: 'none', background: 'linear-gradient(to right, rgba(255, 255, 255, 0.05), transparent)' }}
           >
             <div
               onClick={(e) => { if (isDesktop && !isDragging) { e.stopPropagation(); onClose() } }}
-              className={`mw-absolute mw-left-1/2 mw-flex mw-items-center mw-justify-center mw-p-2 mw-rounded-lg ${isDragging ? 'mw-bg-wallet-accent/90' : 'mw-bg-white/15 mw-backdrop-blur-md'} mw-border mw-border-white/20 mw-shadow-lg mw-transition-colors ${isDesktop ? 'mw-cursor-pointer hover:mw-bg-white/25' : ''}`}
+              className={`absolute left-1/2 flex items-center justify-center p-2 rounded-lg ${isDragging ? 'bg-wallet-accent/90' : 'bg-white/15 backdrop-blur-md'} border border-white/20 shadow-lg transition-colors ${isDesktop ? 'cursor-pointer hover:bg-white/25' : ''}`}
               style={{ top: `${pillY}%`, transform: 'translate(-50%, -50%)', transition: isDragging ? 'none' : 'top 0.15s ease-out' }}
             >
-              {isDesktop ? <X className="mw-w-5 mw-h-5 mw-text-white/70" /> : <ChevronRight className="mw-w-5 mw-h-5 mw-text-white/70" />}
+              {isDesktop ? <X className="w-5 h-5 text-white/70" /> : <ChevronRight className="w-5 h-5 text-white/70" />}
             </div>
           </div>
 
           <div
-            className="mw-flex mw-items-center mw-gap-4 mw-px-6 mw-pl-14 mw-py-4 mw-border-b mw-border-wallet-surface-border mw-bg-wallet-bg-secondary/50 mw-flex-shrink-0"
+            className="flex items-center gap-4 px-6 pl-14 py-4 border-b border-wallet-surface-border bg-wallet-bg-secondary/50 flex-shrink-0"
             style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top, 0px))' }}
           >
-            <div className="mw-flex-1 mw-min-w-0">
-              <h2 className="mw-font-bold mw-text-xl">Financial Reports</h2>
-              <p className="mw-text-sm mw-text-wallet-text-muted mw-flex mw-items-center mw-gap-1">
+            <div className="flex-1 min-w-0">
+              <h2 className="font-bold text-xl">Financial Reports</h2>
+              <p className="text-sm text-wallet-text-muted flex items-center gap-1">
                 <span>{currency.symbol}</span>
                 <span>{defaultCurrency}</span>
-                <span className="mw-text-wallet-text-muted/50">\u2022</span>
+                <span className="text-wallet-text-muted/50">\u2022</span>
                 <span>{currency.name}</span>
               </p>
             </div>
             <button
               onClick={refresh}
               disabled={plLoading || bsLoading || txnLoading}
-              className="mw-p-2 mw-rounded-full hover:mw-bg-wallet-bg-tertiary mw-transition-colors disabled:mw-opacity-50"
+              className="p-2 rounded-full hover:bg-wallet-bg-tertiary transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`mw-w-5 mw-h-5 ${plLoading || bsLoading || txnLoading ? 'mw-animate-spin' : ''}`} />
+              <RefreshCw className={`w-5 h-5 ${plLoading || bsLoading || txnLoading ? 'animate-spin' : ''}`} />
             </button>
           </div>
 
-          <div className="mw-px-6 mw-pl-14 mw-py-2 mw-border-b mw-border-wallet-surface-border mw-flex-shrink-0">
+          <div className="px-6 pl-14 py-2 border-b border-wallet-surface-border flex-shrink-0">
             <DateRangePicker options={periodOptions} selected={selectedPeriod} onChange={changePeriod} />
           </div>
 
-          <div className="mw-flex mw-border-b mw-border-wallet-surface-border mw-pl-10 mw-flex-shrink-0">
+          <div className="flex border-b border-wallet-surface-border pl-10 flex-shrink-0">
             {TABS.map((tab) => {
               const Icon = tab.icon
               const isActive = activeTab === tab.id
@@ -195,20 +195,20 @@ export function AccountingHub({ isOpen, onClose, defaultCurrency = 'GBP' }) {
                 <button
                   key={tab.id}
                   onClick={() => changeTab(tab.id)}
-                  className={`mw-flex-1 mw-flex mw-items-center mw-justify-center mw-gap-2 mw-py-3 mw-text-sm mw-font-medium mw-transition-colors mw-relative ${isActive ? 'mw-text-wallet-accent' : 'mw-text-wallet-text-muted hover:mw-text-wallet-text'}`}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-colors relative ${isActive ? 'text-wallet-accent' : 'text-wallet-text-muted hover:text-wallet-text'}`}
                 >
-                  <Icon className="mw-w-4 mw-h-4" />
-                  <span className="mw-hidden sm:mw-inline">{tab.label}</span>
-                  <span className="sm:mw-hidden">{tab.id === 'pl' ? 'P&L' : tab.id === 'balance' ? 'Balance' : 'Txns'}</span>
+                  <Icon className="w-4 h-4" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span className="sm:hidden">{tab.id === 'pl' ? 'P&L' : tab.id === 'balance' ? 'Balance' : 'Txns'}</span>
                   {isActive && (
-                    <motion.div layoutId="mw-accounting-tab-indicator" className="mw-absolute mw-bottom-0 mw-left-0 mw-right-0 mw-h-0.5 mw-bg-wallet-accent" transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }} />
+                    <motion.div layoutId="mw-accounting-tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-wallet-accent" transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }} />
                   )}
                 </button>
               )
             })}
           </div>
 
-          <div className="mw-flex-1 mw-overflow-y-auto mw-px-4 mw-pl-14 mw-py-4 mw-min-h-0">
+          <div className="flex-1 overflow-y-auto px-4 pl-14 py-4 min-h-0">
             <AnimatePresence mode="wait">
               {activeTab === 'pl' && (
                 <motion.div key="pl" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.2 }}>

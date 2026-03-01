@@ -60,29 +60,29 @@ function CurrencyDropdown({ currencies, selectedCurrency, onSelect, loading, err
     }).format(c.balance)
 
   return (
-    <div ref={containerRef} className="mw-relative mw-mb-6">
+    <div ref={containerRef} className="relative mb-6">
       {/* Trigger button */}
       <button
         onClick={() => setOpen((o) => !o)}
         disabled={loading || !!error}
-        className="mw-w-full mw-flex mw-items-center mw-justify-between mw-px-4 mw-py-3 mw-glass-card hover:mw-bg-wallet-surface-hover mw-transition-colors mw-rounded-xl disabled:mw-opacity-50"
+        className="w-full flex items-center justify-between px-4 py-3 mw-glass-card hover:bg-wallet-surface-hover transition-colors rounded-xl disabled:opacity-50"
       >
-        <div className="mw-text-left mw-min-w-0">
+        <div className="text-left min-w-0">
           {loading ? (
-            <span className="mw-text-wallet-text-muted mw-text-sm">Loading currencies…</span>
+            <span className="text-wallet-text-muted text-sm">Loading currencies…</span>
           ) : error ? (
-            <span className="mw-text-red-400 mw-text-sm">{error}</span>
+            <span className="text-red-400 text-sm">{error}</span>
           ) : selectedCurrency ? (
             <>
-              <p className="mw-text-sm mw-font-semibold mw-text-white mw-truncate">{selectedCurrency.name}</p>
-              <p className="mw-text-xs mw-text-wallet-text-muted mw-tabular-nums">{formatBalance(selectedCurrency)}</p>
+              <p className="text-sm font-semibold text-white truncate">{selectedCurrency.name}</p>
+              <p className="text-xs text-wallet-text-muted tabular-nums">{formatBalance(selectedCurrency)}</p>
             </>
           ) : (
-            <span className="mw-text-wallet-text-muted mw-text-sm">Select currency</span>
+            <span className="text-wallet-text-muted text-sm">Select currency</span>
           )}
         </div>
         <ChevronDown
-          className={`mw-w-4 mw-h-4 mw-text-wallet-text-muted mw-flex-shrink-0 mw-ml-2 mw-transition-transform ${open ? 'mw-rotate-180' : ''}`}
+          className={`w-4 h-4 text-wallet-text-muted flex-shrink-0 ml-2 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -94,38 +94,38 @@ function CurrencyDropdown({ currencies, selectedCurrency, onSelect, loading, err
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.15 }}
-            className="mw-absolute mw-top-full mw-left-0 mw-right-0 mw-mt-2 mw-z-50 mw-glass-card mw-rounded-xl mw-overflow-hidden mw-shadow-xl"
+            className="absolute top-full left-0 right-0 mt-2 z-50 mw-glass-card rounded-xl overflow-hidden shadow-xl"
           >
             {/* Search input */}
-            <div className="mw-flex mw-items-center mw-gap-2 mw-px-3 mw-py-2 mw-border-b mw-border-white/10">
-              <Search className="mw-w-4 mw-h-4 mw-text-wallet-text-muted mw-flex-shrink-0" />
+            <div className="flex items-center gap-2 px-3 py-2 border-b border-white/10">
+              <Search className="w-4 h-4 text-wallet-text-muted flex-shrink-0" />
               <input
                 ref={inputRef}
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search currencies…"
-                className="mw-flex-1 mw-bg-transparent mw-text-sm mw-text-white mw-placeholder-wallet-text-muted mw-outline-none"
+                className="flex-1 bg-transparent text-sm text-white placeholder-wallet-text-muted outline-none"
               />
             </div>
 
             {/* Options list */}
-            <ul className="mw-max-h-56 mw-overflow-y-auto">
+            <ul className="max-h-56 overflow-y-auto">
               {filtered.length === 0 ? (
-                <li className="mw-px-4 mw-py-3 mw-text-sm mw-text-wallet-text-muted">No results</li>
+                <li className="px-4 py-3 text-sm text-wallet-text-muted">No results</li>
               ) : (
                 filtered.map((c) => (
                   <li key={c.id}>
                     <button
                       onClick={() => handleSelect(c)}
-                      className="mw-w-full mw-flex mw-items-center mw-justify-between mw-px-4 mw-py-3 hover:mw-bg-wallet-surface-hover mw-transition-colors mw-text-left"
+                      className="w-full flex items-center justify-between px-4 py-3 hover:bg-wallet-surface-hover transition-colors text-left"
                     >
-                      <div className="mw-min-w-0">
-                        <p className="mw-text-sm mw-font-medium mw-text-white mw-truncate">{c.name}</p>
-                        <p className="mw-text-xs mw-text-wallet-text-muted mw-tabular-nums">{formatBalance(c)}</p>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white truncate">{c.name}</p>
+                        <p className="text-xs text-wallet-text-muted tabular-nums">{formatBalance(c)}</p>
                       </div>
                       {selectedCurrency?.id === c.id && (
-                        <Check className="mw-w-4 mw-h-4 mw-text-wallet-accent mw-flex-shrink-0 mw-ml-2" />
+                        <Check className="w-4 h-4 text-wallet-accent flex-shrink-0 ml-2" />
                       )}
                     </button>
                   </li>
@@ -141,7 +141,7 @@ function CurrencyDropdown({ currencies, selectedCurrency, onSelect, loading, err
 
 function CurrencyCardSkeleton() {
   return (
-    <div className="mw-flex-shrink-0 mw-w-36 mw-h-16 mw-rounded-xl mw-glass-card mw-animate-pulse" />
+    <div className="flex-shrink-0 w-36 h-16 rounded-xl mw-glass-card animate-pulse" />
   )
 }
 
@@ -156,11 +156,11 @@ function CurrencyCard({ currency, isSelected, onClick }) {
       onClick={onClick}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className={`mw-flex-shrink-0 mw-px-4 mw-py-3 mw-rounded-xl mw-transition-all ${isSelected ? 'mw-bg-wallet-accent/20 mw-border mw-border-wallet-accent/50' : 'mw-glass-card hover:mw-bg-wallet-surface-hover'}`}
+      className={`flex-shrink-0 px-4 py-3 rounded-xl transition-all ${isSelected ? 'bg-wallet-accent/20 border border-wallet-accent/50' : 'mw-glass-card hover:bg-wallet-surface-hover'}`}
     >
-      <div className="mw-text-left">
-        <p className="mw-text-sm mw-font-semibold mw-text-white">{currency.name}</p>
-        <p className="mw-text-sm mw-text-wallet-text-muted mw-tabular-nums">{formattedBalance}</p>
+      <div className="text-left">
+        <p className="text-sm font-semibold text-white">{currency.name}</p>
+        <p className="text-sm text-wallet-text-muted tabular-nums">{formattedBalance}</p>
       </div>
     </motion.button>
   )
@@ -179,34 +179,34 @@ function MainCard({ currency }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`mw-relative mw-overflow-hidden mw-rounded-2xl mw-bg-gradient-to-br ${currency.color} mw-p-6 mw-shadow-xl`}
+      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${currency.color} p-6 shadow-xl`}
     >
-      <div className="mw-absolute mw-inset-0 mw-opacity-10">
-        <div className="mw-absolute mw-top-0 mw-right-0 mw-w-64 mw-h-64 mw-rounded-full mw-bg-white mw-blur-3xl mw-transform mw-translate-x-1/2 -mw-translate-y-1/2" />
-        <div className="mw-absolute mw-bottom-0 mw-left-0 mw-w-48 mw-h-48 mw-rounded-full mw-bg-white mw-blur-3xl mw-transform -mw-translate-x-1/2 mw-translate-y-1/2" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-white blur-3xl transform translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white blur-3xl transform -translate-x-1/2 translate-y-1/2" />
       </div>
 
-      <div className="mw-relative mw-z-10">
-        <p className="mw-text-white mw-text-2xl mw-font-bold mw-mb-1">{currency.name}</p>
-        <p className="mw-text-white/60 mw-text-xs mw-font-medium mw-uppercase mw-tracking-wider mw-mb-4">Available Balance</p>
-        <p className="mw-text-4xl sm:mw-text-5xl mw-font-bold mw-text-white mw-tabular-nums">{formattedBalance}</p>
+      <div className="relative z-10">
+        <p className="text-white text-2xl font-bold mb-1">{currency.name}</p>
+        <p className="text-white/60 text-xs font-medium uppercase tracking-wider mb-4">Available Balance</p>
+        <p className="text-4xl sm:text-5xl font-bold text-white tabular-nums">{formattedBalance}</p>
 
         {/* Card holder / expires — commented out, may restore later
-        <div className="mw-flex mw-items-center mw-justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <div className="mw-flex mw-gap-1 mw-mb-2">
+            <div className="flex gap-1 mb-2">
               {[1, 2, 3, 4].map((group) => (
-                <span key={group} className="mw-text-white/50 mw-text-sm mw-tracking-wider">
+                <span key={group} className="text-white/50 text-sm tracking-wider">
                   {group < 4 ? '\u2022\u2022\u2022\u2022' : '4829'}
                 </span>
               ))}
             </div>
-            <p className="mw-text-xs mw-text-white/50">CARD HOLDER</p>
-            <p className="mw-text-white mw-font-medium">{walletName || 'USER'}</p>
+            <p className="text-xs text-white/50">CARD HOLDER</p>
+            <p className="text-white font-medium">{walletName || 'USER'}</p>
           </div>
-          <div className="mw-text-right">
-            <p className="mw-text-xs mw-text-white/50">EXPIRES</p>
-            <p className="mw-text-white mw-font-medium">12/28</p>
+          <div className="text-right">
+            <p className="text-xs text-white/50">EXPIRES</p>
+            <p className="text-white font-medium">12/28</p>
           </div>
         </div>
         */}
@@ -217,7 +217,7 @@ function MainCard({ currency }) {
 
 function MainCardSkeleton() {
   return (
-    <div className="mw-h-48 mw-rounded-2xl mw-glass-card mw-animate-pulse" />
+    <div className="h-48 rounded-2xl mw-glass-card animate-pulse" />
   )
 }
 
@@ -250,10 +250,10 @@ export function WalletPage() {
   }, [accountingEntityGuid, apiBaseUrl, authToken])
 
   const actions = [
-    { icon: Plus, label: 'Add', color: 'mw-bg-green-500/20 mw-text-green-400' },
-    { icon: ArrowLeftRight, label: 'Move', color: 'mw-bg-blue-500/20 mw-text-blue-400' },
-    { icon: PieChart, label: 'Reports', color: 'mw-bg-purple-500/20 mw-text-purple-400', onClick: () => setShowAccounting(true) },
-    { icon: MoreHorizontal, label: 'More', color: 'mw-bg-gray-500/20 mw-text-gray-400' },
+    { icon: Plus, label: 'Add', color: 'bg-green-500/20 text-green-400' },
+    { icon: ArrowLeftRight, label: 'Move', color: 'bg-blue-500/20 text-blue-400' },
+    { icon: PieChart, label: 'Reports', color: 'bg-purple-500/20 text-purple-400', onClick: () => setShowAccounting(true) },
+    { icon: MoreHorizontal, label: 'More', color: 'bg-gray-500/20 text-gray-400' },
   ]
 
   const greeting = () => {
@@ -264,10 +264,10 @@ export function WalletPage() {
   }
 
   return (
-    <div className="mw-px-4 sm:mw-px-6 lg:mw-px-8 mw-py-6 mw-max-w-2xl mw-mx-auto">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mw-mb-6">
-        <p className="mw-text-wallet-text-muted">{greeting()},</p>
-        <h1 className="mw-text-2xl mw-font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
+    <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-2xl mx-auto">
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+        <p className="text-wallet-text-muted">{greeting()},</p>
+        <h1 className="text-2xl font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
       </motion.div>
 
       {/* Currency selector dropdown */}
@@ -286,7 +286,7 @@ export function WalletPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.15 }}
-        className="mw-flex mw-gap-3 mw-overflow-x-auto mw-pb-4 -mw-mx-4 mw-px-4 mw-scrollbar-hide mw-mb-6"
+        className="flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 mw-scrollbar-hide mb-6"
       >
         {loading && [0, 1, 2].map((i) => <CurrencyCardSkeleton key={i} />)}
         {!loading && currencies.map((currency) => (
@@ -308,7 +308,7 @@ export function WalletPage() {
         )}
       </AnimatePresence>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mw-grid mw-grid-cols-4 mw-gap-3 mw-mt-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-4 gap-3 mt-6">
         {actions.map((action, index) => {
           const Icon = action.icon
           return (
@@ -318,46 +318,46 @@ export function WalletPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3 + index * 0.05 }}
               onClick={action.onClick}
-              className="mw-flex mw-flex-col mw-items-center mw-gap-2 mw-p-4 mw-glass-card hover:mw-bg-wallet-surface-hover mw-transition-colors"
+              className="flex flex-col items-center gap-2 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
             >
-              <div className={`mw-p-3 mw-rounded-full ${action.color}`}>
-                <Icon className="mw-w-5 mw-h-5" />
+              <div className={`p-3 rounded-full ${action.color}`}>
+                <Icon className="w-5 h-5" />
               </div>
-              <span className="mw-text-sm mw-font-medium">{action.label}</span>
+              <span className="text-sm font-medium">{action.label}</span>
             </motion.button>
           )
         })}
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mw-grid mw-grid-cols-2 mw-gap-4 mw-mt-6">
-        <button className="mw-flex mw-items-center mw-gap-3 mw-p-4 mw-glass-card hover:mw-bg-wallet-surface-hover mw-transition-colors">
-          <div className="mw-p-2 mw-rounded-full mw-bg-wallet-accent/20">
-            <Send className="mw-w-5 mw-h-5 mw-text-wallet-accent" />
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-2 gap-4 mt-6">
+        <button className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors">
+          <div className="p-2 rounded-full bg-wallet-accent/20">
+            <Send className="w-5 h-5 text-wallet-accent" />
           </div>
-          <div className="mw-text-left">
-            <p className="mw-font-medium">Send</p>
-            <p className="mw-text-sm mw-text-wallet-text-muted">Transfer funds</p>
+          <div className="text-left">
+            <p className="font-medium">Send</p>
+            <p className="text-sm text-wallet-text-muted">Transfer funds</p>
           </div>
         </button>
 
-        <button className="mw-flex mw-items-center mw-gap-3 mw-p-4 mw-glass-card hover:mw-bg-wallet-surface-hover mw-transition-colors">
-          <div className="mw-p-2 mw-rounded-full mw-bg-green-500/20">
-            <Download className="mw-w-5 mw-h-5 mw-text-green-400" />
+        <button className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors">
+          <div className="p-2 rounded-full bg-green-500/20">
+            <Download className="w-5 h-5 text-green-400" />
           </div>
-          <div className="mw-text-left">
-            <p className="mw-font-medium">Request</p>
-            <p className="mw-text-sm mw-text-wallet-text-muted">Request payment</p>
+          <div className="text-left">
+            <p className="font-medium">Request</p>
+            <p className="text-sm text-wallet-text-muted">Request payment</p>
           </div>
         </button>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mw-mt-8">
-        <div className="mw-flex mw-items-center mw-justify-between mw-mb-4">
-          <div className="mw-flex mw-items-center mw-gap-2">
-            <History className="mw-w-5 mw-h-5 mw-text-wallet-text-muted" />
-            <h3 className="mw-text-sm mw-font-semibold mw-text-wallet-text-muted mw-uppercase mw-tracking-wider">Recent Activity</h3>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <History className="w-5 h-5 text-wallet-text-muted" />
+            <h3 className="text-sm font-semibold text-wallet-text-muted uppercase tracking-wider">Recent Activity</h3>
           </div>
-          <button className="mw-text-sm mw-text-wallet-accent hover:mw-text-wallet-accent-light mw-transition-colors">View all →</button>
+          <button className="text-sm text-wallet-accent hover:text-wallet-accent-light transition-colors">View all →</button>
         </div>
       </motion.div>
 

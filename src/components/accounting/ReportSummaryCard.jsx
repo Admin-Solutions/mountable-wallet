@@ -12,10 +12,10 @@ export function ReportSummaryCard({
   index = 0,
 }) {
   const variants = {
-    default: { bg: 'mw-bg-wallet-bg-tertiary/50', text: 'mw-text-wallet-text', accent: 'mw-text-wallet-accent' },
-    revenue: { bg: 'mw-bg-green-500/10', text: 'mw-text-green-400', accent: 'mw-text-green-400' },
-    expense: { bg: 'mw-bg-red-500/10', text: 'mw-text-red-400', accent: 'mw-text-red-400' },
-    net: { bg: 'mw-bg-wallet-accent/10', text: 'mw-text-wallet-accent', accent: 'mw-text-wallet-accent' },
+    default: { bg: 'bg-wallet-bg-tertiary/50', text: 'text-wallet-text', accent: 'text-wallet-accent' },
+    revenue: { bg: 'bg-green-500/10', text: 'text-green-400', accent: 'text-green-400' },
+    expense: { bg: 'bg-red-500/10', text: 'text-red-400', accent: 'text-red-400' },
+    net: { bg: 'bg-wallet-accent/10', text: 'text-wallet-accent', accent: 'text-wallet-accent' },
   }
 
   const style = variants[variant] || variants.default
@@ -29,18 +29,18 @@ export function ReportSummaryCard({
       transition={{ delay: index * 0.1 }}
       onClick={onClick}
       className={`
-        mw-glass-card mw-p-4 mw-text-center mw-flex-1 mw-min-w-0
-        ${onClick ? 'mw-cursor-pointer hover:mw-bg-wallet-surface-hover active:mw-scale-[0.98] mw-transition-all' : ''}
+        mw-glass-card p-4 text-center flex-1 min-w-0
+        ${onClick ? 'cursor-pointer hover:bg-wallet-surface-hover active:scale-[0.98] transition-all' : ''}
         ${style.bg}
       `}
     >
-      <p className="mw-text-wallet-text-muted mw-text-xs mw-uppercase mw-tracking-wider mw-mb-1">{label}</p>
-      <p className={`mw-text-xl mw-font-bold mw-truncate ${style.text}`}>
+      <p className="text-wallet-text-muted text-xs uppercase tracking-wider mb-1">{label}</p>
+      <p className={`text-xl font-bold truncate ${style.text}`}>
         {formatCurrency(value, currency)}
       </p>
       {change !== undefined && (
-        <div className={`mw-flex mw-items-center mw-justify-center mw-gap-1 mw-mt-1 mw-text-xs ${isPositiveChange ? 'mw-text-green-400' : 'mw-text-red-400'}`}>
-          <TrendIcon className="mw-w-3 mw-h-3" />
+        <div className={`flex items-center justify-center gap-1 mt-1 text-xs ${isPositiveChange ? 'text-green-400' : 'text-red-400'}`}>
+          <TrendIcon className="w-3 h-3" />
           <span>{formatChange(change)}</span>
         </div>
       )}

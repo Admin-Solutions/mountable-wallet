@@ -10,26 +10,26 @@ function TransactionRow({ transaction, currency, index }) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="mw-glass-card mw-p-4 mw-flex mw-items-center mw-gap-3"
+      className="mw-glass-card p-4 flex items-center gap-3"
     >
-      <div className={`mw-w-10 mw-h-10 mw-rounded-full mw-flex mw-items-center mw-justify-center mw-flex-shrink-0 ${isCredit ? 'mw-bg-green-500/20' : 'mw-bg-red-500/20'}`}>
+      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isCredit ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
         {isCredit ? (
-          <ArrowDownLeft className="mw-w-5 mw-h-5 mw-text-green-400" />
+          <ArrowDownLeft className="w-5 h-5 text-green-400" />
         ) : (
-          <ArrowUpRight className="mw-w-5 mw-h-5 mw-text-red-400" />
+          <ArrowUpRight className="w-5 h-5 text-red-400" />
         )}
       </div>
 
-      <div className="mw-flex-1 mw-min-w-0">
-        <p className="mw-font-medium mw-truncate">{transaction.description}</p>
-        <div className="mw-flex mw-items-center mw-gap-2 mw-text-sm mw-text-wallet-text-muted">
+      <div className="flex-1 min-w-0">
+        <p className="font-medium truncate">{transaction.description}</p>
+        <div className="flex items-center gap-2 text-sm text-wallet-text-muted">
           <span>{new Date(transaction.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
-          <span className="mw-w-1 mw-h-1 mw-rounded-full mw-bg-wallet-text-muted" />
-          <span className="mw-truncate">{transaction.category}</span>
+          <span className="w-1 h-1 rounded-full bg-wallet-text-muted" />
+          <span className="truncate">{transaction.category}</span>
         </div>
       </div>
 
-      <span className={`mw-font-semibold mw-flex-shrink-0 ${isCredit ? 'mw-text-green-400' : 'mw-text-red-400'}`}>
+      <span className={`font-semibold flex-shrink-0 ${isCredit ? 'text-green-400' : 'text-red-400'}`}>
         {isCredit ? '+' : ''}{formatCurrency(transaction.amount, currency)}
       </span>
     </motion.div>
@@ -38,37 +38,37 @@ function TransactionRow({ transaction, currency, index }) {
 
 function FilterPills({ filter, onFilterChange, onClear, categoryName }) {
   return (
-    <div className="mw-flex mw-items-center mw-gap-2 mw-flex-wrap">
+    <div className="flex items-center gap-2 flex-wrap">
       {categoryName && (
-        <div className="mw-flex mw-items-center mw-gap-1 mw-px-3 mw-py-1 mw-bg-wallet-accent/20 mw-text-wallet-accent mw-rounded-full mw-text-sm">
+        <div className="flex items-center gap-1 px-3 py-1 bg-wallet-accent/20 text-wallet-accent rounded-full text-sm">
           <span>{categoryName}</span>
-          <button onClick={onClear} className="hover:mw-text-wallet-accent-light">
-            <X className="mw-w-3 mw-h-3" />
+          <button onClick={onClear} className="hover:text-wallet-accent-light">
+            <X className="w-3 h-3" />
           </button>
         </div>
       )}
 
-      <div className="mw-flex mw-gap-1">
+      <div className="flex gap-1">
         <button
           onClick={() => onFilterChange({ ...filter, type: null })}
-          className={`mw-px-3 mw-py-1 mw-rounded-full mw-text-sm mw-transition-colors ${
-            !filter.type ? 'mw-bg-wallet-bg-tertiary mw-text-white' : 'mw-bg-wallet-bg-tertiary/50 mw-text-wallet-text-secondary hover:mw-text-wallet-text'
+          className={`px-3 py-1 rounded-full text-sm transition-colors ${
+            !filter.type ? 'bg-wallet-bg-tertiary text-white' : 'bg-wallet-bg-tertiary/50 text-wallet-text-secondary hover:text-wallet-text'
           }`}
         >
           All
         </button>
         <button
           onClick={() => onFilterChange({ ...filter, type: 'credit' })}
-          className={`mw-px-3 mw-py-1 mw-rounded-full mw-text-sm mw-transition-colors ${
-            filter.type === 'credit' ? 'mw-bg-green-500/20 mw-text-green-400' : 'mw-bg-wallet-bg-tertiary/50 mw-text-wallet-text-secondary hover:mw-text-wallet-text'
+          className={`px-3 py-1 rounded-full text-sm transition-colors ${
+            filter.type === 'credit' ? 'bg-green-500/20 text-green-400' : 'bg-wallet-bg-tertiary/50 text-wallet-text-secondary hover:text-wallet-text'
           }`}
         >
           Income
         </button>
         <button
           onClick={() => onFilterChange({ ...filter, type: 'debit' })}
-          className={`mw-px-3 mw-py-1 mw-rounded-full mw-text-sm mw-transition-colors ${
-            filter.type === 'debit' ? 'mw-bg-red-500/20 mw-text-red-400' : 'mw-bg-wallet-bg-tertiary/50 mw-text-wallet-text-secondary hover:mw-text-wallet-text'
+          className={`px-3 py-1 rounded-full text-sm transition-colors ${
+            filter.type === 'debit' ? 'bg-red-500/20 text-red-400' : 'bg-wallet-bg-tertiary/50 text-wallet-text-secondary hover:text-wallet-text'
           }`}
         >
           Expenses
@@ -93,11 +93,11 @@ export function TransactionList({
 }) {
   if (error) {
     return (
-      <div className="mw-text-center mw-py-20">
-        <p className="mw-text-red-500 mw-mb-4">{error}</p>
+      <div className="text-center py-20">
+        <p className="text-red-500 mb-4">{error}</p>
         <button
           onClick={onRefresh}
-          className="mw-px-4 mw-py-2 mw-bg-wallet-accent mw-rounded-lg hover:mw-bg-wallet-accent-light mw-transition-colors"
+          className="px-4 py-2 bg-wallet-accent rounded-lg hover:bg-wallet-accent-light transition-colors"
         >
           Try Again
         </button>
@@ -106,7 +106,7 @@ export function TransactionList({
   }
 
   return (
-    <div className="mw-space-y-4">
+    <div className="space-y-4">
       <FilterPills
         filter={filter}
         onFilterChange={onFilterChange}
@@ -115,24 +115,24 @@ export function TransactionList({
       />
 
       {loading && transactions.length === 0 ? (
-        <div className="mw-flex mw-items-center mw-justify-center mw-py-20">
-          <Loader2 className="mw-w-8 mw-h-8 mw-text-wallet-accent mw-animate-spin" />
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-8 h-8 text-wallet-accent animate-spin" />
         </div>
       ) : transactions.length === 0 ? (
-        <div className="mw-text-center mw-py-20 mw-text-wallet-text-muted">
-          <Filter className="mw-w-12 mw-h-12 mw-mx-auto mw-mb-4 mw-opacity-50" />
+        <div className="text-center py-20 text-wallet-text-muted">
+          <Filter className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <p>No transactions found</p>
           {drillDownCategory && (
             <button
               onClick={onClearDrillDown}
-              className="mw-mt-4 mw-text-wallet-accent hover:mw-text-wallet-accent-light"
+              className="mt-4 text-wallet-accent hover:text-wallet-accent-light"
             >
               Clear filters
             </button>
           )}
         </div>
       ) : (
-        <div className="mw-space-y-2">
+        <div className="space-y-2">
           <AnimatePresence>
             {transactions.map((txn, index) => (
               <TransactionRow key={txn.id} transaction={txn} currency={currency} index={index} />
@@ -142,15 +142,15 @@ export function TransactionList({
       )}
 
       {pagination?.hasMore && (
-        <div className="mw-text-center mw-py-4">
+        <div className="text-center py-4">
           <button
             onClick={onLoadMore}
             disabled={loading}
-            className="mw-px-6 mw-py-3 mw-bg-wallet-bg-tertiary hover:mw-bg-wallet-bg-secondary mw-rounded-xl mw-transition-colors disabled:mw-opacity-50"
+            className="px-6 py-3 bg-wallet-bg-tertiary hover:bg-wallet-bg-secondary rounded-xl transition-colors disabled:opacity-50"
           >
             {loading ? (
-              <span className="mw-flex mw-items-center mw-gap-2">
-                <Loader2 className="mw-w-4 mw-h-4 mw-animate-spin" />
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Loading...
               </span>
             ) : (
@@ -161,7 +161,7 @@ export function TransactionList({
       )}
 
       {transactions.length > 0 && (
-        <div className="mw-text-center mw-text-wallet-text-muted mw-text-sm mw-pt-4 mw-border-t mw-border-wallet-surface-border">
+        <div className="text-center text-wallet-text-muted text-sm pt-4 border-t border-wallet-surface-border">
           Showing {transactions.length} of {pagination?.totalItems || transactions.length} transactions
         </div>
       )}

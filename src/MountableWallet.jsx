@@ -8,7 +8,7 @@ import { WalletPage } from './components/WalletPage'
 export function MountableWallet({ config }) {
   return (
     <WalletConfigProvider config={config}>
-      <div className="mw-wallet-root mw-h-full mw-overflow-y-auto">
+      <div className="mw-wallet-root h-full overflow-y-auto">
         <WalletPage />
       </div>
     </WalletConfigProvider>
