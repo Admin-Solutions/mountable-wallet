@@ -13,7 +13,10 @@ import {
   Check,
 } from 'lucide-react'
 import { AccountingHub } from './accounting'
+import { SendModal } from './SendModal'
+import { AddFundsModal } from './AddFundsModal'
 import { useWalletConfig } from '../context/WalletConfigContext'
+import { useAuthCheck } from '../hooks/useAuthCheck'
 import { getCurrencyBalances } from '../services/balanceService'
 import { normalizeCurrencies } from '../utils/currencyUtils'
 
@@ -229,6 +232,18 @@ export function WalletPage() {
   const [error, setError] = useState(null)
   const [selectedCurrency, setSelectedCurrency] = useState(null)
   const [showAccounting, setShowAccounting] = useState(false)
+  const [showSend, setShowSend] = useState(false)
+  const [showAddFunds, setShowAddFunds] = useState(false)
+
+  const { checkAuth } = useAuthCheck()
+
+  const handleOpenSend = async () => {
+    if (await checkAuth()) setShowSend(true)
+  }
+
+  const handleOpenAddFunds = async () => {
+    if (await checkAuth()) setShowAddFunds(true)
+  }
 
   useEffect(() => {
     if (!accountingEntityGuid || !apiBaseUrl) return
@@ -250,7 +265,7 @@ export function WalletPage() {
   }, [accountingEntityGuid, apiBaseUrl, authToken])
 
   const actions = [
-    { icon: Plus, label: 'Add', color: 'bg-green-500/20 text-green-400' },
+    { icon: Plus, label: 'Add', color: 'bg-green-500/20 text-green-400', onClick: handleOpenAddFunds },
     { icon: ArrowLeftRight, label: 'Move', color: 'bg-blue-500/20 text-blue-400' },
     { icon: PieChart, label: 'Reports', color: 'bg-purple-500/20 text-purple-400', onClick: () => setShowAccounting(true) },
     { icon: MoreHorizontal, label: 'More', color: 'bg-gray-500/20 text-gray-400' },
@@ -330,7 +345,10 @@ export function WalletPage() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-2 gap-4 mt-6">
-        <button className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors">
+        <button
+          onClick={handleOpenSend}
+          className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
+        >
           <div className="p-2 rounded-full bg-wallet-accent/20">
             <Send className="w-5 h-5 text-wallet-accent" />
           </div>
@@ -362,6 +380,8 @@ export function WalletPage() {
       </motion.div>
 
       <AccountingHub isOpen={showAccounting} onClose={() => setShowAccounting(false)} defaultCurrency={selectedCurrency?.code} />
+      <SendModal isOpen={showSend} onClose={() => setShowSend(false)} />
+      <AddFundsModal isOpen={showAddFunds} onClose={() => setShowAddFunds(false)} currency={selectedCurrency} />
     </div>
   )
 }

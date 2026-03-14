@@ -58,8 +58,8 @@ export function currencyColor(index) {
  * into the normalised shape consumed by WalletPage UI components.
  *
  * Raw shape:  { currencyGuid, currencyName, symbol, isNativeCurrency, decimalPlaces,
- *               practicalDecimalPlaces, balance }
- * Output shape: { id, name, sign, code, balance, decimalPlaces, isNativeCurrency, color }
+ *               practicalDecimalPlaces, balance, currencyRAID }
+ * Output shape: { id, name, sign, code, balance, decimalPlaces, isNativeCurrency, color, raid }
  */
 export function normalizeCurrencies(apiCurrencies) {
   if (!Array.isArray(apiCurrencies)) return []
@@ -74,6 +74,7 @@ export function normalizeCurrencies(apiCurrencies) {
       decimalPlaces: c.practicalDecimalPlaces ?? c.decimalPlaces ?? 2,
       isNativeCurrency: Boolean(c.isNativeCurrency),
       color: currencyColor(i),
+      raid: c.currencyRAID ?? null,
     }
   })
 }
