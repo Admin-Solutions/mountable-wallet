@@ -16,7 +16,6 @@ import { AccountingHub } from './accounting'
 import { SendModal } from './SendModal'
 import { AddFundsModal } from './AddFundsModal'
 import { useWalletConfig } from '../context/WalletConfigContext'
-import { useAuthCheck } from '../hooks/useAuthCheck'
 import { getCurrencyBalances } from '../services/balanceService'
 import { normalizeCurrencies } from '../utils/currencyUtils'
 
@@ -235,16 +234,6 @@ export function WalletPage() {
   const [showSend, setShowSend] = useState(false)
   const [showAddFunds, setShowAddFunds] = useState(false)
 
-  const { checkAuth } = useAuthCheck()
-
-  const handleOpenSend = async () => {
-    if (await checkAuth()) setShowSend(true)
-  }
-
-  const handleOpenAddFunds = async () => {
-    if (await checkAuth()) setShowAddFunds(true)
-  }
-
   useEffect(() => {
     if (!accountingEntityGuid || !apiBaseUrl) return
 
@@ -265,7 +254,7 @@ export function WalletPage() {
   }, [accountingEntityGuid, apiBaseUrl, authToken])
 
   const actions = [
-    { icon: Plus, label: 'Add', color: 'bg-green-500/20 text-green-400', onClick: handleOpenAddFunds },
+    { icon: Plus, label: 'Add', color: 'bg-green-500/20 text-green-400', onClick: () => setShowAddFunds(true) },
     { icon: ArrowLeftRight, label: 'Move', color: 'bg-blue-500/20 text-blue-400' },
     { icon: PieChart, label: 'Reports', color: 'bg-purple-500/20 text-purple-400', onClick: () => setShowAccounting(true) },
     { icon: MoreHorizontal, label: 'More', color: 'bg-gray-500/20 text-gray-400' },
@@ -279,107 +268,112 @@ export function WalletPage() {
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-2xl mx-auto">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-        <p className="text-wallet-text-muted">{greeting()},</p>
-        <h1 className="text-2xl font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
-      </motion.div>
+    <div className="relative h-full">
+      <div className="h-full overflow-y-auto">
+        <div className="px-4 sm:px-6 lg:px-8 py-6 max-w-2xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+            <p className="text-wallet-text-muted">{greeting()},</p>
+            <h1 className="text-2xl font-bold">{walletName?.split(' ')[0] || 'User'}</h1>
+          </motion.div>
 
-      {/* Currency selector dropdown */}
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
-        <CurrencyDropdown
-          currencies={currencies}
-          selectedCurrency={selectedCurrency}
-          onSelect={setSelectedCurrency}
-          loading={loading}
-          error={error}
-        />
-      </motion.div>
+          {/* Currency selector dropdown */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
+            <CurrencyDropdown
+              currencies={currencies}
+              selectedCurrency={selectedCurrency}
+              onSelect={setSelectedCurrency}
+              loading={loading}
+              error={error}
+            />
+          </motion.div>
 
-      {/* Currency cards — horizontal scroll */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 mw-scrollbar-hide mb-6"
-      >
-        {loading && [0, 1, 2].map((i) => <CurrencyCardSkeleton key={i} />)}
-        {!loading && currencies.map((currency) => (
-          <CurrencyCard
-            key={currency.id}
-            currency={currency}
-            isSelected={selectedCurrency?.id === currency.id}
-            onClick={() => setSelectedCurrency(currency)}
-          />
-        ))}
-      </motion.div>
+          {/* Currency cards — horizontal scroll */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="flex gap-3 overflow-x-auto pb-4 -mx-4 px-4 mw-scrollbar-hide mb-6"
+          >
+            {loading && [0, 1, 2].map((i) => <CurrencyCardSkeleton key={i} />)}
+            {!loading && currencies.map((currency) => (
+              <CurrencyCard
+                key={currency.id}
+                currency={currency}
+                isSelected={selectedCurrency?.id === currency.id}
+                onClick={() => setSelectedCurrency(currency)}
+              />
+            ))}
+          </motion.div>
 
-      {/* Main balance card */}
-      <AnimatePresence mode="wait">
-        {selectedCurrency ? (
-          <MainCard key={selectedCurrency.id} currency={selectedCurrency} />
-        ) : (
-          <MainCardSkeleton key="skeleton" />
-        )}
-      </AnimatePresence>
+          {/* Main balance card */}
+          <AnimatePresence mode="wait">
+            {selectedCurrency ? (
+              <MainCard key={selectedCurrency.id} currency={selectedCurrency} />
+            ) : (
+              <MainCardSkeleton key="skeleton" />
+            )}
+          </AnimatePresence>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-4 gap-3 mt-6">
-        {actions.map((action, index) => {
-          const Icon = action.icon
-          return (
-            <motion.button
-              key={action.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 + index * 0.05 }}
-              onClick={action.onClick}
-              className="flex flex-col items-center gap-2 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="grid grid-cols-4 gap-3 mt-6">
+            {actions.map((action, index) => {
+              const Icon = action.icon
+              return (
+                <motion.button
+                  key={action.label}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.3 + index * 0.05 }}
+                  onClick={action.onClick}
+                  className="flex flex-col items-center gap-2 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
+                >
+                  <div className={`p-3 rounded-full ${action.color}`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-sm font-medium">{action.label}</span>
+                </motion.button>
+              )
+            })}
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-2 gap-4 mt-6">
+            <button
+              onClick={() => setShowSend(true)}
+              className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
             >
-              <div className={`p-3 rounded-full ${action.color}`}>
-                <Icon className="w-5 h-5" />
+              <div className="p-2 rounded-full bg-wallet-accent/20">
+                <Send className="w-5 h-5 text-wallet-accent" />
               </div>
-              <span className="text-sm font-medium">{action.label}</span>
-            </motion.button>
-          )
-        })}
-      </motion.div>
+              <div className="text-left">
+                <p className="font-medium">Send</p>
+                <p className="text-sm text-wallet-text-muted">Transfer funds</p>
+              </div>
+            </button>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="grid grid-cols-2 gap-4 mt-6">
-        <button
-          onClick={handleOpenSend}
-          className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors"
-        >
-          <div className="p-2 rounded-full bg-wallet-accent/20">
-            <Send className="w-5 h-5 text-wallet-accent" />
-          </div>
-          <div className="text-left">
-            <p className="font-medium">Send</p>
-            <p className="text-sm text-wallet-text-muted">Transfer funds</p>
-          </div>
-        </button>
+            <button className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors">
+              <div className="p-2 rounded-full bg-green-500/20">
+                <Download className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="text-left">
+                <p className="font-medium">Request</p>
+                <p className="text-sm text-wallet-text-muted">Request payment</p>
+              </div>
+            </button>
+          </motion.div>
 
-        <button className="flex items-center gap-3 p-4 mw-glass-card hover:bg-wallet-surface-hover transition-colors">
-          <div className="p-2 rounded-full bg-green-500/20">
-            <Download className="w-5 h-5 text-green-400" />
-          </div>
-          <div className="text-left">
-            <p className="font-medium">Request</p>
-            <p className="text-sm text-wallet-text-muted">Request payment</p>
-          </div>
-        </button>
-      </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-8">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <History className="w-5 h-5 text-wallet-text-muted" />
+                <h3 className="text-sm font-semibold text-wallet-text-muted uppercase tracking-wider">Recent Activity</h3>
+              </div>
+              <button className="text-sm text-wallet-accent hover:text-wallet-accent-light transition-colors">View all →</button>
+            </div>
+          </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-wallet-text-muted" />
-            <h3 className="text-sm font-semibold text-wallet-text-muted uppercase tracking-wider">Recent Activity</h3>
-          </div>
-          <button className="text-sm text-wallet-accent hover:text-wallet-accent-light transition-colors">View all →</button>
+          <AccountingHub isOpen={showAccounting} onClose={() => setShowAccounting(false)} defaultCurrency={selectedCurrency?.code} />
         </div>
-      </motion.div>
+      </div>
 
-      <AccountingHub isOpen={showAccounting} onClose={() => setShowAccounting(false)} defaultCurrency={selectedCurrency?.code} />
       <SendModal isOpen={showSend} onClose={() => setShowSend(false)} />
       <AddFundsModal isOpen={showAddFunds} onClose={() => setShowAddFunds(false)} currency={selectedCurrency} />
     </div>

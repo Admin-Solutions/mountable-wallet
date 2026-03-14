@@ -5,9 +5,8 @@ import { AddFundsFlow } from './AddFundsPaymentLazy'
 import { universalPost } from '../api/universalApi'
 import { useWalletConfig } from '../context/WalletConfigContext'
 
-const ENDPOINT_ONRAMP      = '530ba997-f7b0-4f71-9d5a-2776b7fa9116'
-const ENDPOINT_ENTITIES    = '080b1ef1-1345-4c26-8687-9dd73873cd9f'
-const ENDPOINT_FUND        = 'c5a7023b-ffec-41e6-8639-a9421a8bfeef'
+const ENDPOINT_ONRAMP = '530ba997-f7b0-4f71-9d5a-2776b7fa9116'
+const ENDPOINT_FUND   = 'c5a7023b-ffec-41e6-8639-a9421a8bfeef'
 
 function mapOnrampMethods(values = []) {
   return values.map((item) => ({
@@ -25,16 +24,6 @@ function mapOnrampMethods(values = []) {
   }))
 }
 
-function mapLedgers(entities = []) {
-  return entities.map((e) => ({
-    id:               e.accountingEntityGuid,
-    name:             e.accountingEntityName,
-    balance:          e.balance ?? 0,
-    ownershipPercent: e.percentageOwnership <= 1
-      ? e.percentageOwnership * 100
-      : e.percentageOwnership,
-  }))
-}
 
 /**
  * Bottom-sheet wrapper for the add-funds onramp flow.
@@ -47,7 +36,6 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
   const { apiBaseUrl, authToken, entityAuth, onTransactionComplete, onAuthError } = useWalletConfig()
 
   const [onrampMethods, setOnrampMethods] = useState([])
-  const [ledgers, setLedgers]             = useState([])
   const [loading, setLoading]             = useState(false)
   const [error, setError]                 = useState(null)
 
@@ -61,23 +49,14 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
     setLoading(true)
     setError(null)
 
-    Promise.all([
-      universalPost(
-        apiBaseUrl,
-        ENDPOINT_ONRAMP,
-        { '@FilterCurrencyRAID': currency.raid ?? 0 },
-        authToken
-      ),
-      universalPost(
-        apiBaseUrl,
-        ENDPOINT_ENTITIES,
-        {},
-        authToken
-      ),
-    ])
-      .then(([onrampRes, entitiesRes]) => {
+    universalPost(
+      apiBaseUrl,
+      ENDPOINT_ONRAMP,
+      { '@FilterCurrencyRAID': currency.raid ?? 0 },
+      authToken
+    )
+      .then((onrampRes) => {
         setOnrampMethods(mapOnrampMethods(onrampRes.value ?? []))
-        setLedgers(mapLedgers(entitiesRes.value ?? []))
       })
       .catch((err) => {
         console.error('[AddFundsModal] failed to load data:', err)
@@ -90,7 +69,6 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
   useEffect(() => {
     if (!isOpen) {
       setOnrampMethods([])
-      setLedgers([])
       setError(null)
       y.set(0)
     }
@@ -166,7 +144,7 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={handleClose}
-            className="fixed inset-0 z-[60] bg-black/50"
+            className="absolute inset-0 z-[60] bg-black/50"
             style={{ opacity: backdropOpacity }}
           />
 
@@ -181,7 +159,7 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
             dragElastic={{ top: 0, bottom: 0.6 }}
             onDragEnd={handleDragEnd}
             style={{ y, maxHeight: 'calc(100dvh - 1rem)' }}
-            className="fixed bottom-0 left-0 right-0 z-[70] mw-glass-card rounded-t-3xl border-t border-white/10 flex flex-col"
+            className="absolute bottom-0 left-0 right-0 z-[70] mw-glass-card rounded-t-3xl border-t border-white/10 flex flex-col"
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing flex-shrink-0">
@@ -208,7 +186,7 @@ export function AddFundsModal({ isOpen, onClose, currency }) {
                 <AddFundsFlow
                   onClose={handleClose}
                   onrampMethods={onrampMethods}
-                  ledgers={ledgers}
+                  ledgers={[]}
                   onSubmitPayment={handleSubmitPayment}
                 />
               )}
