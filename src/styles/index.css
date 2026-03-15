@@ -23,21 +23,22 @@
 }
 
 /* -----------------------------------------------------------------------
-   Wallet root — exposes themeable CSS variables, scoped so nothing leaks.
+   Wallet root — inherits from the host page's nexus theme vars if present,
+   falls back to default dark values.
    ----------------------------------------------------------------------- */
 .mw-wallet-root {
-  --mw-bg-primary: #0a0a0f;
-  --mw-bg-secondary: #12121a;
-  --mw-bg-tertiary: #1a1a24;
-  --mw-surface: rgba(255, 255, 255, 0.03);
-  --mw-surface-hover: rgba(255, 255, 255, 0.06);
+  --mw-bg-primary:     rgb(var(--nexus-900, 10 10 15));
+  --mw-bg-secondary:   rgb(var(--nexus-800, 18 18 26));
+  --mw-bg-tertiary:    rgb(var(--nexus-700, 26 26 36));
+  --mw-surface:        rgba(255, 255, 255, 0.03);
+  --mw-surface-hover:  rgba(255, 255, 255, 0.06);
   --mw-surface-border: rgba(255, 255, 255, 0.08);
-  --mw-accent: #6366f1;
-  --mw-accent-light: #818cf8;
-  --mw-accent-dark: #4f46e5;
-  --mw-text-primary: #f8fafc;
+  --mw-accent:         rgb(var(--accent,       99 102 241));
+  --mw-accent-light:   rgb(var(--accent-light, 129 140 248));
+  --mw-accent-dark:    rgb(var(--accent-dark,  79 70 229));
+  --mw-text-primary:   #f8fafc;
   --mw-text-secondary: #94a3b8;
-  --mw-text-muted: #64748b;
+  --mw-text-muted:     #64748b;
   --mw-success: #22c55e;
   --mw-error: #ef4444;
   --mw-warning: #f59e0b;

@@ -27,7 +27,7 @@ function normalizeBuddy(raw) {
 }
 
 export function SendModal({ isOpen, onClose }) {
-  const { walletGuid, apiBaseUrl, authToken, onAuthError, onTransactionComplete } = useWalletConfig()
+  const { apiBaseUrl, onAuthError, onTransactionComplete } = useWalletConfig()
 
   // steps: 'recipient' → 'amount' → 'success'
   const [step, setStep]                 = useState('recipient')
@@ -106,11 +106,9 @@ export function SendModal({ isOpen, onClose }) {
           apiBaseUrl,
           ENDPOINT_GET_BUDDIES,
           {
-            '@TargetWalletGUID': walletGuid,
             '@PageSize': '15',
             '@SearchText': recipientSearch.trim(),
-          },
-          authToken
+          }
         )
         const raw = value?.[0]?.results?.[0]?.BuddyList
           || value?.[0]?.BuddyList
@@ -130,7 +128,7 @@ export function SendModal({ isOpen, onClose }) {
     }, 400)
 
     return () => clearTimeout(searchTimerRef.current)
-  }, [recipientSearch, isOpen, step, apiBaseUrl, walletGuid, authToken])
+  }, [recipientSearch, isOpen, step, apiBaseUrl])
 
   // Select buddy and fetch sendable currencies
   const handleSelectBuddy = async (buddy) => {
@@ -138,7 +136,7 @@ export function SendModal({ isOpen, onClose }) {
     setStep('amount')
     setLoadingCurrencies(true)
     try {
-      const { value } = await universalPost(apiBaseUrl, ENDPOINT_GET_CURRENCIES, {}, authToken)
+      const { value } = await universalPost(apiBaseUrl, ENDPOINT_GET_CURRENCIES, {})
       setCurrencies(value || [])
     } catch (e) {
       console.error('[SendModal] currency fetch error:', e)
@@ -188,8 +186,7 @@ export function SendModal({ isOpen, onClose }) {
           '@TargetWalletGUID': selectedBuddy.walletGuid,
           '@CurrencyRAID':     currency.currencyRAID,
           '@Amount':           parsedAmount,
-        },
-        authToken
+        }
       )
 
       const meta = value?.[0]?.meta || value?.[0] || {}
@@ -225,7 +222,7 @@ export function SendModal({ isOpen, onClose }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="absolute inset-0 z-[80] flex items-center justify-center"
+          className="fixed inset-0 z-[90] flex items-center justify-center"
         >
           {/* Backdrop */}
           <motion.div

@@ -74,7 +74,7 @@ export function normalizeCurrencies(apiCurrencies) {
       decimalPlaces: c.practicalDecimalPlaces ?? c.decimalPlaces ?? 2,
       isNativeCurrency: Boolean(c.isNativeCurrency),
       color: currencyColor(i),
-      raid: c.currencyRAID ?? null,
+      raid: c.currencyId ?? c.currencyRAID ?? null,
     }
   })
 }

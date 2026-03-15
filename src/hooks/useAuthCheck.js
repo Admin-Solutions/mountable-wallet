@@ -17,15 +17,14 @@ const MAX_AUTH_AGE_MINUTES = 30
  *   checkAuth resolves false → auth is stale, onAuthError was called, block
  */
 export function useAuthCheck() {
-  const { apiBaseUrl, authToken, onAuthError } = useWalletConfig()
+  const { apiBaseUrl, onAuthError } = useWalletConfig()
 
   const checkAuth = useCallback(async () => {
     try {
       const { value } = await universalPost(
         apiBaseUrl,
         ENDPOINT_AUTH_CHECK,
-        {},
-        authToken
+        {}
       )
       const authDate = value?.[0]?.walletAuthDateCreated
       if (authDate) {
@@ -39,7 +38,7 @@ export function useAuthCheck() {
       // Optimistic — let through on error
     }
     return true
-  }, [apiBaseUrl, authToken, onAuthError])
+  }, [apiBaseUrl, onAuthError])
 
   return { checkAuth }
 }

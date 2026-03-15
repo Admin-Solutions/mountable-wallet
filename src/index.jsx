@@ -1,17 +1,49 @@
 import { createRoot } from 'react-dom/client'
 import { MountableWallet } from './MountableWallet'
-// CSS is processed by @tailwindcss/vite and injected into the bundle by
-// vite-plugin-css-injected-by-js — no manual ?inline handling needed.
 import './styles/index.css'
 
-// Store active instances for cleanup
-const instances = new Map()
+/**
+ * open(config) — the primary entry point.
+ *
+ * Creates its own DOM node on document.body, mounts the wallet overlay
+ * (bottom sheet, backdrop, ledger picker, wallet view), and cleans up
+ * automatically when the user closes it.
+ *
+ * Config options:
+ *   walletName  {string}    Display name for the greeting (e.g. "Charles")
+ *   apiBaseUrl  {string}    API host, e.g. 'https://seemynft.page'
+ *   theme       {string}    'dark' (default)
+ *   onClose     {function}  Called after wallet is dismissed
+ *   onAuthError {function}  Called if an auth error occurs inside the wallet
+ *
+ * Returns { unmount } — call unmount() to force-close (e.g. on route change).
+ */
+export function open(config = {}) {
+  const div = document.createElement('div')
+  document.body.appendChild(div)
+  const root = createRoot(div)
+
+  const cleanup = () => {
+    root.unmount()
+    if (div.parentNode) div.parentNode.removeChild(div)
+  }
+
+  root.render(
+    <MountableWallet
+      config={config}
+      onClose={() => {
+        config.onClose?.()
+        cleanup()
+      }}
+    />
+  )
+
+  return { unmount: cleanup }
+}
 
 /**
- * Mount the wallet component to a container
- * @param {string|HTMLElement} selector - CSS selector or DOM element
- * @param {object} config - Configuration options
- * @returns {object} Controller object with refresh, updateConfig, unmount methods
+ * mount(container, config) — embeds the wallet into an existing container.
+ * For use in React apps that want to manage the shell themselves.
  */
 export function mount(selector, config = {}) {
   const container = typeof selector === 'string'
@@ -22,63 +54,33 @@ export function mount(selector, config = {}) {
     throw new Error(`MountableWallet: Container not found: ${selector}`)
   }
 
-  // Apply custom theme CSS variables if provided
-  if (config.customTheme) {
-    Object.entries(config.customTheme).forEach(([key, value]) => {
-      container.style.setProperty(key, value)
-    })
-  }
-
   const root = createRoot(container)
   let currentConfig = { ...config }
 
-  const render = (cfg) => {
-    root.render(<MountableWallet config={cfg} />)
-  }
-
+  const render = (cfg) => root.render(<MountableWallet config={cfg} onClose={cfg.onClose} />)
   render(currentConfig)
 
-  const controller = {
-    refresh: () => {
-      container.dispatchEvent(new CustomEvent('mw-wallet-refresh'))
-    },
-
+  return {
     updateConfig: (newConfig) => {
       currentConfig = { ...currentConfig, ...newConfig }
       render(currentConfig)
     },
-
-    unmount: () => {
-      root.unmount()
-      instances.delete(container)
-    },
-
+    unmount: () => root.unmount(),
     getConfig: () => ({ ...currentConfig }),
   }
-
-  instances.set(container, controller)
-  return controller
 }
 
-/**
- * Unmount all wallet instances
- */
 export function unmountAll() {
-  instances.forEach((controller) => {
-    controller.unmount()
-  })
-  instances.clear()
+  // No-op when using open() — each instance cleans itself up.
+  // Kept for backwards compat.
 }
 
-// Export React components for direct usage in React apps
+// Named exports for direct React usage
 export { MountableWallet } from './MountableWallet'
 export { WalletConfigProvider, useWalletConfig } from './context/WalletConfigContext'
 export { WalletPage } from './components/WalletPage'
 
-// UMD global for script tag usage
+// Global for CDN script-tag usage
 if (typeof window !== 'undefined') {
-  window.MountableWallet = {
-    mount,
-    unmountAll,
-  }
+  window.MountableWallet = { open, mount, unmountAll }
 }

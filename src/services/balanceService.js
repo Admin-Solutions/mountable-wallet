@@ -5,21 +5,20 @@ const ENDPOINT_CURRENCIES = '7d777ccb-2ecb-4d4d-b1cb-69185a6016ae'
 
 /**
  * Fetch all currencies and their current balances for an accounting entity.
+ * Auth is handled via cookies — no token needed.
  *
  * Returns the raw value array from the Universal API — call normalizeCurrencies()
  * from currencyUtils.js to transform it into UI-ready objects.
  *
  * @param {string} accountingEntityGuid
- * @param {string} apiBaseUrl   - e.g. 'https://seemynft.page'
- * @param {string} [authToken]  - Bearer token forwarded from wallet config
+ * @param {string} apiBaseUrl - e.g. 'https://seemynft.page'
  * @returns {Promise<Array>}
  */
-export async function getCurrencyBalances(accountingEntityGuid, apiBaseUrl, authToken) {
+export async function getCurrencyBalances(accountingEntityGuid, apiBaseUrl) {
   const { value } = await universalPost(
     apiBaseUrl,
     ENDPOINT_CURRENCIES,
-    { '@AccountingEntityGUID': accountingEntityGuid },
-    authToken
+    { '@AccountingEntityGUID': accountingEntityGuid }
   )
   return value
 }

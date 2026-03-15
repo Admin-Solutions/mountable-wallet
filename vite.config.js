@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     react(),
-    cssInjectedByJs(),
+    cssInjectedByJs({ attributes: { 'data-mw-styles': '' } }),
   ],
   define: {
     'process.env.NODE_ENV': JSON.stringify('production'),
