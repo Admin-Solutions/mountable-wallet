@@ -365,6 +365,9 @@ export function WalletPage() {
           c.raid === currencyRAID ? { ...c, balance: (c.balance ?? 0) + amountFunded } : c
         )
       )
+      setSelectedCurrency((prev) =>
+        prev?.raid === currencyRAID ? { ...prev, balance: (prev.balance ?? 0) + amountFunded } : prev
+      )
     }
     window.addEventListener('nexus:fundsAdded', handler)
     return () => window.removeEventListener('nexus:fundsAdded', handler)
