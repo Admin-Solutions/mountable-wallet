@@ -362,16 +362,12 @@ export function WalletPage() {
       if (!amountFunded || !currencyRAID) return
       // eslint-disable-next-line eqeqeq
       const matches = (c) => c.raid == currencyRAID // loose equality handles string/number mismatch
-      setCurrencies((prev) => {
-        const updated = prev.map((c) =>
-          matches(c) ? { ...c, balance: (c.balance ?? 0) + amountFunded } : c
-        )
-        setSelectedCurrency((prev) => {
-          const found = updated.find((c) => c.id === prev?.id)
-          return found ?? prev
-        })
-        return updated
-      })
+      setCurrencies((prev) => prev.map((c) =>
+        matches(c) ? { ...c, balance: (c.balance ?? 0) + amountFunded } : c
+      ))
+      setSelectedCurrency((prev) =>
+        prev && matches(prev) ? { ...prev, balance: (prev.balance ?? 0) + amountFunded } : prev
+      )
     }
     window.addEventListener('nexus:fundsAdded', handler)
     return () => window.removeEventListener('nexus:fundsAdded', handler)
