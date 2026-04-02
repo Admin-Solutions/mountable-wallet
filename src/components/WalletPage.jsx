@@ -390,7 +390,11 @@ export function WalletPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ EndPointGUID: '186795a5-fc53-4a1e-9bf3-273c8a3ad895' }),
+        body: JSON.stringify({
+          pmc: window.__BOOTSTRAP__?.PAGE_MONKEY_CODE_COOKIE || '',
+          force_use_external_pmc: true,
+          EndPointGUID: '186795a5-fc53-4a1e-9bf3-273c8a3ad895',
+        }),
       })
       if (res.ok) {
         const data = await res.json()
@@ -445,7 +449,11 @@ export function WalletPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ EndPointGUID: '186795a5-fc53-4a1e-9bf3-273c8a3ad895' }),
+        body: JSON.stringify({
+          pmc: window.__BOOTSTRAP__?.PAGE_MONKEY_CODE_COOKIE || '',
+          force_use_external_pmc: true,
+          EndPointGUID: '186795a5-fc53-4a1e-9bf3-273c8a3ad895',
+        }),
       })
       if (res.ok) {
         const data = await res.json()

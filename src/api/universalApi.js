@@ -20,16 +20,24 @@ export async function universalPost(apiBaseUrl, endpointGuid, additionalPayload 
   const headers = { 'Content-Type': 'application/json' }
   if (authToken) headers.Authorization = `Bearer ${authToken}`
 
+  const pmc = window.__BOOTSTRAP__?.PAGE_MONKEY_CODE_COOKIE
+  const body = {
+    pmc: pmc || '',
+    force_use_external_pmc: true,
+    EndPointGUID: endpointGuid,
+    additionalPayload,
+  }
+
   const response = await fetch(url, {
     method: 'POST',
     headers,
     credentials: 'include',
-    body: JSON.stringify({ EndPointGUID: endpointGuid, additionalPayload }),
+    body: JSON.stringify(body),
   })
 
   if (!response.ok) {
-    const body = await response.text().catch(() => '')
-    console.error('[universalApi] HTTP error', response.status, response.statusText, body)
+    const errText = await response.text().catch(() => '')
+    console.error('[universalApi] HTTP error', response.status, response.statusText, errText)
     throw new Error(`API error ${response.status}: ${response.statusText}`)
   }
 
